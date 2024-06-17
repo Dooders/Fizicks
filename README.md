@@ -1,2 +1,2 @@
 # Fizicks
-A stripped down implementation of pymunk
+A state-based physics model in python
