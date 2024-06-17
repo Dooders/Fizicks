@@ -1,2 +1,2 @@
 # Fizicks
-A state-based physics model in python
+A sloppy state-based physics model in python
