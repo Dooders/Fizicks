@@ -35,6 +35,12 @@ class Vector:
             int(self.x / other), int(self.y / other), int(self.z / other)
         )
 
+    def __eq__(self, other: "Vector") -> bool:
+        return self.x == other.x and self.y == other.y and self.z == other.z
+
+    def __ne__(self, other: "Vector") -> bool:
+        return not self == other
+
     def __repr__(self):
         return f"{self.__class__.__name__}({self.x}, {self.y}, {self.z})"
 
@@ -88,22 +94,22 @@ class ThirdLaw:
     @classmethod
     def apply(cls, object: Any):
         """
-        Updates the velocity of the object based on the acceleration.
+        Updates the acceleration of the object based on the velocity and mass.
         """
         object.acceleration = object.velocity / object.mass
-        object.velocity = object.velocity + object.acceleration
 
 
 class Motion:
     """The motion of an object is determined by the sum of its forces and the net force acting on it."""
 
     @classmethod
-    def update(cls, object: Any, debts: List[Force]) -> None:
+    def update(cls, object: Any) -> None:
         """
         Updates the object based on the forces applied and its current state.
         """
-        for debt in debts:
-            FirstLaw.apply(object, debt)
+        if object.debt:
+            for debt in object.debt:
+                FirstLaw.apply(object, debt)
         SecondLaw.apply(object)
         ThirdLaw.apply(object)
 
