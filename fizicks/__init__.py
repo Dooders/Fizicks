@@ -1,0 +1,1 @@
+from fizicks.main import *

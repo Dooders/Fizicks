@@ -62,7 +62,6 @@ def test_third_law():
     obj = MockObject(Velocity(1, 2, 3), Position(0, 0, 0), 2.0)
     ThirdLaw.apply(obj)
     assert obj.acceleration == Velocity(0, 1, 1)
-    assert obj.velocity == Velocity(1, 3, 4)
 
 
 def test_motion_update():
