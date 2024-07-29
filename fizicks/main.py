@@ -114,3 +114,17 @@ class Motion:
         ThirdLaw.apply(object)
 
         object.debt = []
+
+
+class Object:
+    def __init__(self, position, velocity, mass):
+        self.position = position
+        self.velocity = velocity
+        self.mass = mass
+        self.debt = []
+
+    def update(self):
+        Motion.update(self)
+
+    def state(self):
+        return [self.position, self.velocity, self.mass, self.debt]
