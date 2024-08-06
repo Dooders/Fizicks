@@ -63,5 +63,20 @@ class Velocity(Vector):
     """The velocity of an object is a vector that describes its speed and direction in space."""
 
     def __init__(self, x: float, y: float, z: float):
-        self.x = x
         super().__init__(x, y, z)
+
+
+class Area:
+    def __init__(self, dimensions: Vector, has_boundaries: bool = False) -> None:
+        """
+        Initializes the area with the given dimensions and whether it has boundaries.
+
+        Parameters
+        ----------
+        dimensions : Vector
+            The dimensions of the area.
+        has_boundaries : bool
+            Whether the area has boundaries. If False, the area is toroidal. Default is False.
+        """
+        self.dimensions = dimensions
+        self.has_boundaries = has_boundaries
