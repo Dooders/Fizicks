@@ -51,6 +51,13 @@ class Motion:
                 FirstLaw.apply(object, debt)
         SecondLaw.apply(object, area)
         ThirdLaw.apply(object)
-        Collision.detect(object, area)
-        Collision.resolve(object, area)
         object.debt = []
+        
+        # Check for collisions with other objects
+        for other_object in area.objects:
+            if other_object is not object and Collision.detect(object, other_object):
+                Collision.resolve(object, other_object)
+
+
+
+
