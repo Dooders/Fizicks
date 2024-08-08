@@ -1,6 +1,8 @@
 # Fizicks
 ![Project Status](https://img.shields.io/badge/status-in%20development-orange)
 
+A fools errand and an explorers dream.
+
 ## Overview
 
 This library provides a set of classes and methods to simulate physical phenomena in three-dimensional space. It includes representations for vectors, forces, positions, velocities, and the application of Newton's laws of motion.
