@@ -44,6 +44,22 @@ class Vector:
     def __str__(self):
         return f"{self.__class__.__name__}({self.x}, {self.y}, {self.z})"
 
+    def __mod__(self, other):
+        return Vector(
+            self.x % other.x if other.x != 0 else self.x,
+            self.y % other.y if other.y != 0 else self.y,
+            self.z % other.z if other.z != 0 else self.z,
+        )
+
+    def magnitude(self) -> float:
+        return (self.x**2 + self.y**2 + self.z**2) ** 0.5
+
+    def normalize(self) -> "Vector":
+        return self / self.magnitude()
+
+    def dot(self, other: "Vector") -> float:
+        return self.x * other.x + self.y * other.y + self.z * other.z
+
 
 class Force(Vector):
     """A force is a vector that describes the change in momentum of an object over time."""
