@@ -1,5 +1,7 @@
 from typing import TYPE_CHECKING
 
+from fizicks.data import Vector
+
 if TYPE_CHECKING:
     from fizicks.data import Vector
     from fizicks.matter import Matter
@@ -18,7 +20,7 @@ class Collision:
     """
 
     @staticmethod
-    def detect(object1: "Matter", object2: "Matter") -> bool:
+    def detect_objects(object1: "Matter", object2: "Matter") -> bool:
         """
         Detects if a collision has occurred between two objects.
 
@@ -38,7 +40,7 @@ class Collision:
         return distance < (object1.radius + object2.radius)
 
     @staticmethod
-    def resolve(object1: "Matter", object2: "Matter") -> None:
+    def resolve_objects(object1: "Matter", object2: "Matter") -> None:
         """
         Resolves the collision between two objects using elastic collision formulas.
 
@@ -51,7 +53,7 @@ class Collision:
         """
         # Calculate the normal and tangential vectors
         normal = (object2.position - object1.position).normalize()
-        tangent = Vector(-normal.y, normal.x)
+        tangent = Vector(-normal.y, normal.x)  # Use the imported Vector class
 
         # Decompose velocities into normal and tangential components
         v1n = normal.dot(object1.velocity)
@@ -76,3 +78,23 @@ class Collision:
         # Update velocities
         object1.velocity = v1n_after_vec + v1t_vec
         object2.velocity = v2n_after_vec + v2t_vec
+
+    def detect_border(object: "Matter", space: "Space") -> bool:
+        """
+        Detects if an object has collided with the border of the space.
+        """
+        return (
+            object.position.x < 0
+            or object.position.x > space.dimensions.x
+            or object.position.y < 0
+            or object.position.y > space.dimensions.y
+        )
+
+    def resolve_border(object: "Matter", space: "Space") -> None:
+        """
+        Resolves the collision between an object and the border of the space.
+        """
+        if object.position.x < 0:
+            object.position.x = 0
+        elif object.position.x > space.dimensions.x:
+            object.position.x = space.dimensions.x
