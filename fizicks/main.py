@@ -3,8 +3,7 @@ from typing import Any, Tuple
 from fizicks.motion import Motion
 
 
-class Space:
-    #! call it World? or PhysicalSpace? or Map?
+class Universe:
     def __init__(
         self,
         dimensions: Tuple[int, int, int] = (100, 100, 100),
@@ -27,23 +26,21 @@ class Fizicks:
     object : Any
         The object to apply the physics to. When initialized, the object
         is given a list that tracks its debts.
-    space : Space
-        The space to apply the physics to. By default, the space is a 3D space
-        with dimensions (100, 100, 100) with no boundaries.
-
+    universe : Universe
+        The space to apply the physics to.
     Methods
     -------
     update()
         Updates the object's state by applying rigid motion physics.
     """
 
-    def __init__(self, object: Any, space: Space = Space()) -> None:
+    def __init__(self, object: Any, universe: Universe = Universe()) -> None:
         object.debt = []
         self.motion = Motion()
-        self.space = space
+        self.universe = universe
 
     def update(self) -> None:
         """
         Updates the object's state by applying rigid motion physics.
         """
-        self.motion.update(self.object, self.space)
+        self.motion.update(self.object, self.universe)
