@@ -51,6 +51,12 @@ class Vector:
             self.z % other.z if other.z != 0 else self.z,
         )
 
+    def __iter__(self):
+        return iter((self.x, self.y, self.z))
+
+    def __call__(self):
+        return (self.x, self.y, self.z)
+
     def magnitude(self) -> float:
         return (self.x**2 + self.y**2 + self.z**2) ** 0.5
 
@@ -59,6 +65,9 @@ class Vector:
 
     def dot(self, other: "Vector") -> float:
         return self.x * other.x + self.y * other.y + self.z * other.z
+
+    def copy(self) -> "Vector":
+        return self.__class__(self.x, self.y, self.z)
 
 
 class Force(Vector):
@@ -82,17 +91,19 @@ class Velocity(Vector):
         super().__init__(x, y, z)
 
 
-class Area:
-    def __init__(self, dimensions: Vector, has_boundaries: bool = False) -> None:
-        """
-        Initializes the area with the given dimensions and whether it has boundaries.
-
-        Parameters
-        ----------
-        dimensions : Vector
-            The dimensions of the area.
-        has_boundaries : bool
-            Whether the area has boundaries. If False, the area is toroidal. Default is False.
-        """
-        self.dimensions = dimensions
-        self.has_boundaries = has_boundaries
+class Universe:
+    #! Stores the properties, constants, and restrictions of the universe.
+    #! Contain special handling for restrictions
+    def __init__(self, **kwargs) -> None:
+        self.dimensions = kwargs.get("dimensions", Vector(100, 100, 100))
+        self.toroidal = kwargs.get("toroidal", False)
+        self.gravity = kwargs.get("gravity", Vector(0, 0, 0))
+        self.c = kwargs.get("c", 1)
+        self.viscosity = kwargs.get("viscosity", 0)
+        self.restitution = kwargs.get("restitution", 1)
+        self.friction = kwargs.get("friction", 0)
+        self.air_resistance = kwargs.get("air_resistance", 0)
+        self.air_resistance_coefficient = kwargs.get("air_resistance_coefficient", 0)
+        self.air_resistance_area = kwargs.get("air_resistance_area", 0)
+        self.air_resistance_density = kwargs.get("air_resistance_density", 0)
+        self.objects = []
