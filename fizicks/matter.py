@@ -4,6 +4,7 @@ from fizicks.data import Force, Position, Velocity
 from fizicks.main import Fizicks
 
 if TYPE_CHECKING:
+    from fizicks.data import Vector
     from fizicks.main import Universe
 
 
@@ -26,35 +27,38 @@ class Matter:
 
     Methods
     -------
-    apply_force(force)
-        Apply a force to the object.
+    add_debt(force)
+        Add a force to the object's debt. Will be applied in the next update.
     update(universe)
         Update the object's state based on accumulated forces and current state.
+
+    Properties
+    ----------
+    position : Position
+        The position of the object in the universe.
+    velocity : Velocity
+        The velocity of the object in the universe.
     """
 
     def __init__(
         self, position: "Position", velocity: "Velocity", mass: float, radius: float
     ) -> None:
-        self.position: Position = position
-        self.velocity: Velocity = velocity
+        self._position: Position = position
+        self._velocity: Velocity = velocity
         self.mass: float = mass
         self.radius: float = radius
         self.debt: list[Force] = []
 
-    def apply_force(self, force: "Force") -> None:
+    def add_debt(self, force: "Force") -> None:
         """
-        Apply a force to the object.
+        Add a force to the object's debt.
 
         Parameters
         ----------
         force : Force
             The force to apply to the object.
         """
-        self.velocity = Velocity(
-            self.velocity.x + force.x,
-            self.velocity.y + force.y,
-            self.velocity.z + force.z,
-        )
+        self.debt.append(force)
 
     def update(self, universe: "Universe") -> None:
         """
@@ -67,3 +71,19 @@ class Matter:
         """
         Fizicks.update(self, universe)
         self.debt = []  # Clear forces after applying
+
+    @property
+    def position(self) -> "Position":
+        return self._position
+
+    @position.setter
+    def position(self, value: "Vector") -> None:
+        self._position = Position(*value)
+
+    @property
+    def velocity(self) -> "Velocity":
+        return self._velocity
+
+    @velocity.setter
+    def velocity(self, value: "Vector") -> None:
+        self._velocity = Velocity(*value)
