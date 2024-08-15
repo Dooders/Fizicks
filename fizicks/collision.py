@@ -1,6 +1,8 @@
 from typing import TYPE_CHECKING, Union
 
-from fizicks.data import Universe, Vector
+from fizicks.data import Vector
+from fizicks.universe import Universe
+from fizicks.util import debug_log
 
 if TYPE_CHECKING:
     from fizicks.matter import Matter
@@ -27,7 +29,9 @@ class Collision:
     """
 
     @staticmethod
-    def detect(object: "Matter", other: Union["Matter", "Universe"]) -> bool:
+    def detect(
+        object: "Matter", other: Union["Matter", "Universe"], debug: bool = False
+    ) -> bool:
         """
         Detects if a collision has occurred between an object and another object
         or the universe border.
@@ -46,12 +50,25 @@ class Collision:
             True if a collision is detected, False otherwise.
         """
         if isinstance(other, Universe):
-            return Collision._detect_border(object, other)
+
+            if debug:
+                debug_log(
+                    f"Step {object.time}: Checking for border collision with {other.__class__.__name__}",
+                    object,
+                )
+            return Collision._detect_border(object, other, debug=debug)
         else:
-            return Collision._detect_objects(object, other)
+            if debug:
+                debug_log(
+                    f"Step {object.time}: Checking for object collision with {other.__class__.__name__}",
+                    object,
+                )
+            return Collision._detect_objects(object, other, debug=debug)
 
     @staticmethod
-    def resolve(object: "Matter", other: Union["Matter", "Universe"]) -> None:
+    def resolve(
+        object: "Matter", other: Union["Matter", "Universe"], debug: bool = False
+    ) -> None:
         """
         Resolves the collision between two objects using elastic collision formulas.
 
@@ -65,12 +82,25 @@ class Collision:
             The other object involved in the collision.
         """
         if isinstance(other, Universe):
-            Collision._resolve_border(object, other)
+            if debug:
+
+                debug_log(
+                    f"Resolving border collision with {other.__class__.__name__}",
+                    object,
+                )
+            Collision._resolve_border(object, other, debug=debug)
         else:
-            Collision._resolve_objects(object, other)
+            if debug:
+                debug_log(
+                    f"Resolving object collision with {other.__class__.__name__}",
+                    object,
+                )
+            Collision._resolve_objects(object, other, debug=debug)
 
     @staticmethod
-    def _detect_objects(object1: "Matter", object2: "Matter") -> bool:
+    def _detect_objects(
+        object1: "Matter", object2: "Matter", debug: bool = False
+    ) -> bool:
         """
         Detects if a collision has occurred between two objects.
 
@@ -86,11 +116,18 @@ class Collision:
         bool
             True if a collision has occurred, False otherwise.
         """
+        if debug:
+            debug_log(
+                f"Step {object1.time}: Detecting collision between {object1.description()} and {object2.description()}",
+                object1,
+            )
         distance = (object1.position - object2.position).magnitude()
         return distance < (object1.radius + object2.radius)
 
     @staticmethod
-    def _resolve_objects(object1: "Matter", object2: "Matter") -> None:
+    def _resolve_objects(
+        object1: "Matter", object2: "Matter", debug: bool = False
+    ) -> None:
         """
         Resolves the collision between two objects using elastic collision formulas.
 
@@ -104,6 +141,11 @@ class Collision:
         object2 : Matter
             The second object.
         """
+        if debug:
+            debug_log(
+                f"Step {object1.time}: Resolving collision between {object1.description()} and {object2.description()}",
+                object1,
+            )
         # Calculate the normal and tangential vectors
         normal = (object2.position - object1.position).normalize()
         tangent = Vector(-normal.y, normal.x)
@@ -133,33 +175,83 @@ class Collision:
         object1.add_debt(v1n_after_vec + v1t_vec)
         object2.add_debt(v2n_after_vec + v2t_vec)
 
-    def _detect_border(object: "Matter", universe: "Universe") -> bool:
+    def _detect_border(
+        object: "Matter", universe: "Universe", debug: bool = False
+    ) -> bool:
         """
         Detects if an object has collided with the border of the space.
         """
-        if universe.toroidal:
-            return False
+        if debug:
+            debug_log(
+                f"Step {object.time}: Detecting border collision with {universe.description()}",
+                object,
+            )
         return (
-            object.position.x < 0
-            or object.position.x > universe.dimensions.x
-            or object.position.y < 0
-            or object.position.y > universe.dimensions.y
+            object.position.x - object.radius < 0
+            or object.position.x + object.radius > universe.dimensions.x
+            or object.position.y - object.radius < 0
+            or object.position.y + object.radius > universe.dimensions.y
         )
 
-    def _resolve_border(object: "Matter", universe: "Universe") -> None:
+    def _resolve_border(
+        object: "Matter", universe: "Universe", debug: bool = False
+    ) -> None:
         """
         Resolves the collision between an object and the border of the space.
         """
+        if debug:
+            debug_log(
+                f"Step {object.time}: Resolving border collision with border", object
+            )
         if universe.toroidal:
-            # Teleport the object to the other side of the border
+            # For toroidal universe, wrap the object's position
             if object.position.x < 0:
-                object.position.x = 0
-            elif object.position.x > universe.dimensions.x:
                 object.position.x = universe.dimensions.x
+            elif object.position.x > universe.dimensions.x:
+                object.position.x = 0
+
             if object.position.y < 0:
-                object.position.y = 0
-            elif object.position.y > universe.dimensions.y:
                 object.position.y = universe.dimensions.y
+            elif object.position.y > universe.dimensions.y:
+                object.position.y = 0
+
+            if debug:
+                debug_log(
+                    f"Step {object.time}: Wrapped position to {object.position}", object
+                )
+        else:
+            # For non-toroidal universe, reverse velocity upon hitting border
+            if (
+                object.position.x - object.radius < 0
+                or object.position.x + object.radius > universe.dimensions.x
+            ):
+                object.velocity.x = -object.velocity.x
+                # Adjust position to ensure object is within bounds
+                object.position.x = max(
+                    object.radius,
+                    min(object.position.x, universe.dimensions.x - object.radius),
+                )
+
+            if (
+                object.position.y - object.radius < 0
+                or object.position.y + object.radius > universe.dimensions.y
+            ):
+                object.velocity.y = -object.velocity.y
+                # Adjust position to ensure object is within bounds
+                object.position.y = max(
+                    object.radius,
+                    min(object.position.y, universe.dimensions.y - object.radius),
+                )
+
+            if debug:
+                debug_log(
+                    f"Step {object.time}: Reversed velocity to {object.velocity}",
+                    object,
+                )
+                debug_log(
+                    f"Step {object.time}: Adjusted position to {object.position}",
+                    object,
+                )
 
 
 __notes__ = """
