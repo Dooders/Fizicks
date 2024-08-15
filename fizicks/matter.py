@@ -1,11 +1,13 @@
+import uuid
 from typing import TYPE_CHECKING
 
 from fizicks.data import Force, Position, Velocity
 from fizicks.main import Fizicks
+from fizicks.util import debug_log
 
 if TYPE_CHECKING:
     from fizicks.data import Vector
-    from fizicks.main import Universe
+    from fizicks.universe import Universe
 
 
 class Matter:
@@ -22,6 +24,8 @@ class Matter:
         The mass of the object.
     radius : float
         The radius of the object.
+    color : tuple[int, int, int]
+        The color of the object.
     debt : list[Force]
         The list of forces to apply to the object.
 
@@ -31,6 +35,10 @@ class Matter:
         Add a force to the object's debt. Will be applied in the next update.
     update(universe)
         Update the object's state based on accumulated forces and current state.
+    description(short=True)
+        A short description of the object.
+    description(short=False)
+        A long description of the object.
 
     Properties
     ----------
@@ -41,12 +49,20 @@ class Matter:
     """
 
     def __init__(
-        self, position: "Position", velocity: "Velocity", mass: float, radius: float
+        self,
+        position: "Position",
+        velocity: "Velocity",
+        mass: float,
+        radius: float,
+        color: tuple[int, int, int] = (255, 255, 255),
     ) -> None:
+        self.id = uuid.uuid4()
+        self.time = 0
         self._position: Position = position
         self._velocity: Velocity = velocity
         self.mass: float = mass
         self.radius: float = radius
+        self.color: tuple[int, int, int] = color
         self.debt: list[Force] = []
 
     def add_debt(self, force: "Force") -> None:
@@ -58,9 +74,10 @@ class Matter:
         force : Force
             The force to apply to the object.
         """
+        debug_log(f"Step {self.time}: Adding debt: {force} for {self.id}", self)
         self.debt.append(force)
 
-    def update(self, universe: "Universe") -> None:
+    def update(self, universe: "Universe", debug: bool = False) -> None:
         """
         Update the object's state based on accumulated forces and current state.
 
@@ -69,8 +86,21 @@ class Matter:
         universe : Universe
             The universe to update the object in.
         """
-        Fizicks.update(self, universe)
+        Fizicks.update(self, universe, debug=debug)
         self.debt = []  # Clear forces after applying
+        self.time += 1
+
+    def description(self, short: bool = True) -> str:
+        if short:
+            return f"Matter(id={self.id})"
+        else:
+            return f"Matter(id={self.id}, position={self.position}, velocity={self.velocity}, mass={self.mass}, radius={self.radius}, color={self.color})"
+
+    def __repr__(self) -> str:
+        return f"Matter(id={self.id}, position={self.position}, velocity={self.velocity}, mass={self.mass}, radius={self.radius}, color={self.color})"
+
+    def __str__(self) -> str:
+        return f"Matter(id={self.id}, position={self.position}, velocity={self.velocity}, mass={self.mass}, radius={self.radius}, color={self.color})"
 
     @property
     def position(self) -> "Position":
