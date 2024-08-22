@@ -1,7 +1,6 @@
 from typing import TYPE_CHECKING, Any
 
 from fizicks.collision import Collision
-from fizicks.util import debug_log
 
 if TYPE_CHECKING:
     from fizicks.data import Force
@@ -13,7 +12,7 @@ class FirstLaw:
     """An object in motion will remain in motion unless acted on by an external force."""
 
     @classmethod
-    def apply(cls, object: "Matter", force: "Force", debug: bool = True) -> None:
+    def apply(cls, object: "Matter", force: "Force", debug: bool = False) -> None:
         """
         Updates the velocity of the object based on the force applied.
 
@@ -39,7 +38,7 @@ class SecondLaw:
     """The acceleration of an object is directly proportional to the net force acting on it and inversely proportional to its mass."""
 
     @classmethod
-    def apply(cls, object: "Matter", universe: "Universe", debug: bool = True) -> None:
+    def apply(cls, object: "Matter", universe: "Universe", debug: bool = False) -> None:
         """
         Updates the position of the object based on the velocity.
 
@@ -57,6 +56,7 @@ class SecondLaw:
                 f"Step {object.time}: Applying force: {object.velocity} to {object.id}",
                 object,
             )
+
         object.position = object.position + object.velocity
         if debug:
             debug_log(f"Updated position: {object.position}", object)
@@ -69,7 +69,7 @@ class ThirdLaw:
     """For every action, there is an equal and opposite reaction."""
 
     @classmethod
-    def apply(cls, object: "Matter", debug: bool = True) -> None:
+    def apply(cls, object: "Matter", debug: bool = False) -> None:
         """
         Updates the acceleration of the object based on the velocity and mass.
 
@@ -101,7 +101,7 @@ class Motion:
     """
 
     @classmethod
-    def update(cls, object: Any, universe: "Universe", debug: bool = True) -> None:
+    def update(cls, object: Any, universe: "Universe", debug: bool = False) -> None:
         """
         Updates the object based on the forces applied and its current state.
 
@@ -122,16 +122,6 @@ class Motion:
                     object,
                 )
             Collision.resolve(object, universe)
-
-        # Check for collisions with other objects
-        for other_object in universe.objects:
-            if other_object is not object and Collision.detect(object, other_object):
-                if debug:
-                    debug_log(
-                        f"Step {object.time}: Collision detected between {object.id} and {other_object.id}",
-                        object,
-                    )
-                Collision.resolve(object, other_object)
 
         # Apply the forces of motion
         if object.debt:
