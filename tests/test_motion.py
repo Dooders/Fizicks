@@ -1,8 +1,9 @@
 import pytest
 
-from fizicks.data import Force, Position, Universe, Vector, Velocity
+from fizicks.data import Force, Position, Vector, Velocity
 from fizicks.matter import Matter
 from fizicks.motion import FirstLaw, Motion, SecondLaw, ThirdLaw
+from fizicks.universe import Universe
 
 
 class TestMotion:

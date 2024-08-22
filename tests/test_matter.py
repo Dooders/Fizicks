@@ -1,7 +1,8 @@
 import pytest
 
-from fizicks.data import Force, Position, Universe, Velocity
+from fizicks.data import Force, Position, Velocity
 from fizicks.matter import Matter
+from fizicks.universe import Universe
 
 
 class TestMatter:

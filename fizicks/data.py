@@ -1,5 +1,20 @@
 class Vector:
-    """A vector is a quantity in three-dimensional space that has both magnitude and direction."""
+    """
+    A vector is a quantity in three-dimensional space that has both magnitude and direction.
+
+    Methods
+    -------
+    magnitude():
+        Returns the magnitude of the vector.
+    normalize():
+        Returns the normalized vector.
+    dot(other: "Vector") -> float:
+        Returns the dot product of two vectors.
+    copy():
+        Returns a copy of the vector.
+    distance(other: "Vector") -> float:
+        Returns the distance between two vectors.
+    """
 
     def __init__(self, x: float = 0.0, y: float = 0.0, z: float = 0.0) -> None:
         """
@@ -52,22 +67,35 @@ class Vector:
         )
 
     def __iter__(self):
+        """Returns an iterator over the vector."""
         return iter((self.x, self.y, self.z))
 
     def __call__(self):
+        """Returns the vector as a tuple."""
         return (self.x, self.y, self.z)
 
     def magnitude(self) -> float:
+        """Returns the magnitude of the vector."""
         return (self.x**2 + self.y**2 + self.z**2) ** 0.5
 
     def normalize(self) -> "Vector":
-        return self / self.magnitude()
+        """Returns the normalized vector."""
+        mag = self.magnitude()
+        if mag == 0:
+            return Vector(0, 0, 0)  # Return a zero vector if magnitude is zero
+        return self / mag
 
     def dot(self, other: "Vector") -> float:
+        """Returns the dot product of two vectors."""
         return self.x * other.x + self.y * other.y + self.z * other.z
 
     def copy(self) -> "Vector":
+        """Returns a copy of the vector."""
         return self.__class__(self.x, self.y, self.z)
+
+    def distance(self, other: "Vector") -> float:
+        """Returns the distance between two vectors."""
+        return (self - other).magnitude()
 
 
 class Force(Vector):
@@ -89,21 +117,3 @@ class Velocity(Vector):
 
     def __init__(self, x: float, y: float, z: float):
         super().__init__(x, y, z)
-
-
-class Universe:
-    #! Stores the properties, constants, and restrictions of the universe.
-    #! Contain special handling for restrictions
-    def __init__(self, **kwargs) -> None:
-        self.dimensions = kwargs.get("dimensions", Vector(100, 100, 100))
-        self.toroidal = kwargs.get("toroidal", False)
-        self.gravity = kwargs.get("gravity", Vector(0, 0, 0))
-        self.c = kwargs.get("c", 1)
-        self.viscosity = kwargs.get("viscosity", 0)
-        self.restitution = kwargs.get("restitution", 1)
-        self.friction = kwargs.get("friction", 0)
-        self.air_resistance = kwargs.get("air_resistance", 0)
-        self.air_resistance_coefficient = kwargs.get("air_resistance_coefficient", 0)
-        self.air_resistance_area = kwargs.get("air_resistance_area", 0)
-        self.air_resistance_density = kwargs.get("air_resistance_density", 0)
-        self.objects = []

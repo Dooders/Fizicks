@@ -3,8 +3,8 @@ from typing import TYPE_CHECKING
 from fizicks.motion import Motion
 
 if TYPE_CHECKING:
-    from fizicks.data import Universe
     from fizicks.matter import Matter
+    from fizicks.universe import Universe
 
 
 class Fizicks:
@@ -20,7 +20,9 @@ class Fizicks:
     """
 
     @classmethod
-    def update(cls, object: "Matter", universe: "Universe") -> None:
+    def update(
+        cls, object: "Matter", universe: "Universe", debug: bool = False
+    ) -> None:
         """
         Updates the object's state by applying rigid motion physics.
 
@@ -31,4 +33,4 @@ class Fizicks:
         universe : Universe
             The space to apply the physics to.
         """
-        Motion.update(object, universe)
+        Motion.update(object, universe, debug=debug)
