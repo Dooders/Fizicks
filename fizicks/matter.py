@@ -3,7 +3,6 @@ from typing import TYPE_CHECKING
 
 from fizicks.data import Force, Position, Velocity
 from fizicks.main import Fizicks
-from fizicks.util import debug_log
 
 if TYPE_CHECKING:
     from fizicks.data import Vector
@@ -35,6 +34,8 @@ class Matter:
         Add a force to the object's debt. Will be applied in the next update.
     update(universe)
         Update the object's state based on accumulated forces and current state.
+    collides_with(other)
+        Check if the object collides with another object.
     description(short=True)
         A short description of the object.
     description(short=False)
@@ -74,7 +75,6 @@ class Matter:
         force : Force
             The force to apply to the object.
         """
-        debug_log(f"Step {self.time}: Adding debt: {force} for {self.id}", self)
         self.debt.append(force)
 
     def update(self, universe: "Universe", debug: bool = False) -> None:
@@ -89,6 +89,17 @@ class Matter:
         Fizicks.update(self, universe, debug=debug)
         self.debt = []  # Clear forces after applying
         self.time += 1
+
+    def collides_with(self, other: "Matter") -> bool:
+        """
+        Check if the object collides with another object.
+
+        Parameters
+        ----------
+        other : Matter
+            The object to check for collision with.
+        """
+        return self.position.distance(other.position) <= self.radius + other.radius
 
     def description(self, short: bool = True) -> str:
         if short:
