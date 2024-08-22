@@ -1,8 +1,9 @@
 import unittest
 
 from fizicks.collision import Collision
-from fizicks.data import Position, Universe, Vector
+from fizicks.data import Position, Vector
 from fizicks.matter import Matter
+from fizicks.universe import Universe
 
 
 class TestCollision(unittest.TestCase):
