@@ -3,7 +3,7 @@ from setuptools import setup, find_packages
 
 setup(
     name="fizicks",
-    version="0.1.0",
+    version="0.2.0",
     author="Chris Mangum",
     author_email="csmangum@gmail.com",
     description="A state-driven physics model designed to simulate cause and effect within a physical space.",
