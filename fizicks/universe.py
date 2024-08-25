@@ -1,12 +1,12 @@
-from abc import ABC, abstractmethod
 import uuid
+from abc import ABC, abstractmethod
 
 from fizicks.data import Vector
 
 
 class FizicksObject(ABC):
     def __init__(self, **kwargs) -> None:
-        self.id = self.id = uuid.uuid4()
+        self.id = uuid.uuid4()
         self.time = 0
         self.debug = kwargs.get("debug", False)
 
@@ -15,13 +15,10 @@ class FizicksObject(ABC):
         raise NotImplementedError("Subclass must implement a description method")
 
 
-#! Need a base class for universe and matter to inherit from
-class Universe:
-    #! Stores the properties, constants, and restrictions of the universe.
-    #! Contain special handling for restrictions
+class Universe(FizicksObject):
     def __init__(self, **kwargs) -> None:
+        super().__init__(**kwargs)
         self.id = "Universe"
-        self.time = 0
         self.dimensions = kwargs.get("dimensions", Vector(100, 100, 100))
         self.toroidal = kwargs.get("toroidal", False)
         self.gravity = kwargs.get("gravity", Vector(0, 0, 0))
