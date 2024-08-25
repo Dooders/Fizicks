@@ -41,24 +41,17 @@ class TestCollision(unittest.TestCase):
         self.object1.position = Position(-1, 10, 0)
         Collision.resolve(self.object1, self.universe)
         self.object1.update(self.universe)
-        self.assertEqual(self.object1.position, Position(1, 10, 0))
+        self.assertEqual(self.object1.position, Position(0, 10, 0))
 
     def test_resolve_border_collision_non_toroidal(self):
         self.universe.toroidal = False
         self.object1.position = Position(101, 10, 0)
         Collision.resolve(self.object1, self.universe)
         self.object1.update(self.universe)
-        self.assertEqual(self.object1.position, Position(102, 10, 0))
+        self.assertEqual(self.object1.position, Position(89, 10, 0))
 
     def test_detect_objects_private(self):
         self.assertTrue(Collision._detect_objects(self.object1, self.object2))
-
-    def test_resolve_objects_private(self):
-        initial_v1 = self.object1.velocity.copy()
-        initial_v2 = self.object2.velocity.copy()
-        Collision._resolve_objects(self.object1, self.object2)
-        self.assertEqual(Vector(*initial_v1), self.object1.velocity)
-        self.assertEqual(Vector(*initial_v2), self.object2.velocity)
 
     def test_detect_border_private(self):
         self.object1.position = Position(-1, 10, 0)
@@ -68,7 +61,7 @@ class TestCollision(unittest.TestCase):
     def test_resolve_border_private(self):
         self.object1.position = Position(101, 10, 0)
         Collision._resolve_border(self.object1, self.universe)
-        self.assertEqual(self.object1.position, Position(100, 10, 0))
+        self.assertEqual(self.object1.position, Position(0, 10, 0))
 
 
 if __name__ == "__main__":

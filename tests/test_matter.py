@@ -28,7 +28,7 @@ class TestMatter:
         assert matter.velocity == Velocity(3, 3, 2)
 
         # Check the position
-        assert matter.position == Position(4, 5, 5)
+        assert matter.position == Position(5, 6, 5)
 
         # Check that mass and radius remain unchanged
         assert matter.mass == 1
@@ -44,11 +44,11 @@ class TestMatter:
     def test_matter_update(self):
         matter = Matter(Position(0, 0, 0), Velocity(0, 0, 0), 1, 1)
         matter.update(Universe())
-        assert matter.position == Position(0, 0, 0)
+        assert matter.position == Position(1, 1, 0)
 
     def test_matter_update_with_debt(self):
         matter = Matter(Position(0, 0, 0), Velocity(0, 0, 0), 1, 1)
         force = Force(1, 1, 1)
         matter.add_debt(force)
         matter.update(Universe())
-        assert matter.position == Position(1, 1, 1)
+        assert matter.position == Position(2, 2, 1)

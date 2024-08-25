@@ -15,7 +15,7 @@ class TestMotion:
 
     def test_second_law(self):
         obj = Matter(Position(0, 0, 0), Velocity(1, 1, 1), 1.0, 1.0)
-        SecondLaw.apply(obj)
+        SecondLaw.apply(obj, Universe())
         assert obj.position == Position(1, 1, 1)
 
     def test_third_law(self):
