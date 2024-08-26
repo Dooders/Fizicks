@@ -1,3 +1,10 @@
+"""
+A universe encompasses all space, time, and everything within them. 
+It includes all of existence, fundamental interactions, physical processes, 
+constants, and the various forms of matter and energy, along with the 
+structures they create.
+"""
+
 import uuid
 from abc import ABC, abstractmethod
 
